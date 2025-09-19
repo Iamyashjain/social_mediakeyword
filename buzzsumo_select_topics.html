@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Topics - BuzzSumo Trends</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 500px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 32px;
+      }
+      h2 {
+        margin-top: 0;
+      }
+      .keywords-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .keyword-item {
+        background: #e6f0fa;
+        border-radius: 4px;
+        padding: 6px 12px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .keyword-item.selected {
+        background: #0078d7;
+        color: #fff;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      button {
+        background: #0078d7;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 18px;
+        font-size: 1em;
+        cursor: pointer;
+      }
+      button:disabled {
+        background: #aaa;
+      }
+      .select-all {
+        color: #0078d7;
+        cursor: pointer;
+        text-decoration: underline;
+        margin-bottom: 16px;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Select Topics/Keywords</h2>
+      <div class="select-all" id="selectAll">Select All</div>
+      <div class="keywords-list" id="keywordsList"></div>
+      <div class="actions">
+        <button id="searchBtn" disabled>Search Trends</button>
+      </div>
+    </div>
+    <script>
+      // Suggested keywords (can be expanded)
+      const keywords = [
+        "Civic Issues",
+        "Urban Care",
+        "City Services",
+        "Public Complaints",
+        "Civic Engagement",
+        "Smart City",
+        "City Development",
+        "Potholes",
+        "Streetlight Repair",
+        "Clean City",
+        "Waste Management",
+        "Safe Roads",
+        "Water Leakage",
+        "Green City",
+        "FixMyCity",
+        "City Maintenance",
+        "Urban Solutions",
+        "Better Living",
+        "Civic Action",
+        "Work Schedule",
+        "Task Tracking",
+      ];
+      const keywordsList = document.getElementById("keywordsList");
+      const searchBtn = document.getElementById("searchBtn");
+      const selectAllBtn = document.getElementById("selectAll");
+      let selected = [];
+
+      function renderKeywords() {
+        keywordsList.innerHTML = "";
+        keywords.forEach((kw, i) => {
+          const div = document.createElement("div");
+          div.className =
+            "keyword-item" + (selected.includes(kw) ? " selected" : "");
+          div.textContent = kw;
+          div.onclick = () => {
+            if (selected.includes(kw)) {
+              selected = selected.filter((k) => k !== kw);
+            } else {
+              selected.push(kw);
+            }
+            renderKeywords();
+            searchBtn.disabled = selected.length === 0;
+          };
+          keywordsList.appendChild(div);
+        });
+      }
+
+      selectAllBtn.onclick = () => {
+        if (selected.length === keywords.length) {
+          selected = [];
+        } else {
+          selected = [...keywords];
+        }
+        renderKeywords();
+        searchBtn.disabled = selected.length === 0;
+      };
+
+      searchBtn.onclick = () => {
+        if (selected.length === 0) return;
+        // Save selected keywords to localStorage and redirect
+        localStorage.setItem(
+          "buzzsumo_selected_keywords",
+          JSON.stringify(selected)
+        );
+        window.location.href = "buzzsumo_trends_results.html";
+      };
+
+      renderKeywords();
+    </script>
+  </body>
+</html>
